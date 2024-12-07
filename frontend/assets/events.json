@@ -1,0 +1,69 @@
+[
+      {
+        "userId": "U001",
+        "category": "Engineering",
+        "examDate": "2024-12-15",
+        "registrationDate": "2024-10-01",
+        "description": "Entrance exam for engineering undergraduate programs.",
+        "preparationSource": "https://example.com/engineering-prep",
+        "recommendedBooks": [
+          "Introduction to Engineering Mechanics",
+          "Mathematics for Engineers",
+          "Physics for Scientists and Engineers"
+        ]
+      },
+      {
+        "userId": "U002",
+        "category": "Medical",
+        "examDate": "2024-12-20",
+        "registrationDate": "2024-09-15",
+        "description": "Admission test for medical colleges.",
+        "preparationSource": "https://example.com/medical-prep",
+        "recommendedBooks": [
+          "Biology by Campbell",
+          "Organic Chemistry by Morrison and Boyd",
+          "Physics by HC Verma"
+        ]
+      },
+      {
+        "userId": "U003",
+        "category": "Law",
+        "examDate": "2024-12-10",
+        "registrationDate": "2024-10-05",
+        "description": "Entrance exam for law schools.",
+        "preparationSource": "https://example.com/law-prep",
+        "recommendedBooks": [
+          "Introduction to Constitutional Law",
+          "Legal Aptitude by RK Gupta",
+          "Principles of Jurisprudence"
+        ]
+      },
+      {
+        "userId": "U004",
+        "category": "Business",
+        "examDate": "2024-11-30",
+        "registrationDate": "2024-08-25",
+        "description": "MBA entrance exam for business schools.",
+        "preparationSource": "https://example.com/business-prep",
+        "recommendedBooks": [
+          "Quantitative Aptitude for MBA Entrance",
+          "Verbal Ability and Reading Comprehension",
+          "Logical Reasoning and Data Interpretation"
+        ]
+      },
+      {
+        "userId": "U005",
+        "category": "Technology",
+        "examDate": "2024-12-25",
+        "registrationDate": "2024-10-10",
+        "description": "Exam for certification in advanced technologies.",
+        "preparationSource": "https://example.com/tech-prep",
+        "recommendedBooks": [
+          "Introduction to Algorithms by Cormen",
+          "Artificial Intelligence: A Modern Approach",
+          "The Pragmatic Programmer"
+        ]
+      }
+]
+  
+  
