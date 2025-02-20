@@ -1,12 +1,13 @@
 import { useLocalSearchParams, Stack } from 'expo-router';
-import { Text, View, Pressable, ActivityIndicator } from 'react-native';
+import { Text, View, Pressable, ActivityIndicator, StyleSheet, ScrollView, Button, Alert } from 'react-native';
 import axios from 'axios';
 import { useState, useEffect } from 'react';
 import dayjs from 'dayjs';
-
+import { useAuth } from './context/AuthContext';
+import {BASE_URL} from './constant';
 // Define the Event interface
 interface Event {
-  _id: string,
+  _id: string;
   username: string;
   examTitle: string;
   examDate: string;
@@ -21,8 +22,8 @@ interface Event {
 }
 
 export default function EventPage() {
-  const { _id } = useLocalSearchParams(); // Extract the userId from URL
-
+  const { _id } = useLocalSearchParams(); // Extract the event ID from URL
+  const { user } = useAuth();
   const [event, setEvent] = useState<Event | null>(null); // State for event data
   const [loading, setLoading] = useState(true); // State for loading indicator
   const [error, setError] = useState<string | null>(null); // State for error message
@@ -30,8 +31,8 @@ export default function EventPage() {
   useEffect(() => {
     const fetchEvent = async () => {
       try {
-        // Make GET request to fetch event data by userId
-        const response = await axios.get(`http://192.168.29.145:3000/data/exam/${_id}`);
+        // Make GET request to fetch event data by event ID
+        const response = await axios.get(`http://${BASE_URL}:8080/data/exam/${_id}`);
         setEvent(response.data); // Set the fetched event data
       } catch (err) {
         setError('Error fetching event details'); // Set error message if request fails
@@ -42,7 +43,30 @@ export default function EventPage() {
     };
 
     fetchEvent();
-  }, [_id]); // Run this effect when userId changes
+  }, [_id]); // Run this effect when event ID changes
+
+  const handleAddToMyInterests = async () => {
+    if (!user || !event) {
+      Alert.alert('Error', 'User or Event not found.');
+      return;
+    }
+
+    try {
+      const response = await axios.post(
+        `http://${BASE_URL}:8080/api/exam/${user.id}/examid/${event._id}`,
+        {} // If your endpoint requires a body, add it here
+      );
+
+      if (response.status === 200) {
+        Alert.alert('Success', 'Exam added to your interests!');
+      } else {
+        Alert.alert('Error', 'Failed to add exam to your interests.');
+      }
+    } catch (err) {
+      console.error(err);
+      Alert.alert('Error', 'An error occurred while adding the exam.');
+    }
+  };
 
   if (loading) {
     return (
@@ -61,33 +85,96 @@ export default function EventPage() {
   }
 
   return (
-    <View className="p-3 gap-3 bg-white flex-1">
-      <Stack.Screen options={{ title: 'Event' }} />
+    <ScrollView style={styles.container}>
+      <Stack.Screen options={{ title: "Event Details" }} />
+
+      {/* Event Title */}
+      <Text style={styles.title}>{event.examTitle}</Text>
 
       {/* Event Category */}
-      <Text className="text-xl font-bold" numberOfLines={2}>
-        {event.category}
+      <Text style={styles.category}>{event.category}</Text>
+
+      {/* Event Organizer */}
+      <Text style={styles.detail}>
+        <Text style={styles.label}>Posted By: </Text>
+        {event.username}
       </Text>
 
       {/* Event Dates */}
-      <Text className="text-lg font-semibold uppercase text-amber-800">
-        {dayjs(event.examDate).format('ddd, D MMM')} - {dayjs(event.registrationDate).format('ddd, D MMM')}
+      <Text style={styles.detail}>
+        <Text style={styles.label}>Exam Date: </Text>
+        {dayjs(event.examDate).format("dddd, MMM D YYYY")}
+      </Text>
+      <Text style={styles.detail}>
+        <Text style={styles.label}>Registration Closes: </Text>
+        {dayjs(event.registrationDate).format("dddd, MMM D YYYY")}
       </Text>
 
-      {/* Event Description */}
-      <Text className="text-lg" numberOfLines={2}>
-        {event.description}
+      {/* Exam Type */}
+      <Text style={styles.detail}>
+        <Text style={styles.label}>Exam Type: </Text>
+        {event.examType}
       </Text>
 
-      {/* Footer */}
-      <View className="absolute bottom-0 left-0 right-0 pb-10 p-5 border-t-2 border-gray-400">
-        <View className="flex-row justify-between items-center">
-          <Text className="text-xl font-semibold">{event.books}</Text>
-          <Pressable className="bg-red-500 p-5 px-8 rounded-md">
-            <Text className="text-white text-lg font-bold">Join and RSVP</Text>
-          </Pressable>
-        </View>
-      </View>
-    </View>
+      {/* Books */}
+      <Text style={styles.detail}>
+        <Text style={styles.label}>Recommended Books: </Text>
+        {event.books.join(", ")}
+      </Text>
+
+      {/* Preparation Link */}
+      <Text style={styles.detail}>
+        <Text style={styles.label}>Preparation Link: </Text>
+        {event.preparationLink}
+      </Text>
+
+      {/* Exam Application Link */}
+      <Text style={styles.detail}>
+        <Text style={styles.label}>Application Link: </Text>
+        {event.examApplicationLink}
+      </Text>
+
+      {/* Description */}
+      <Text style={styles.description}>{event.description}</Text>
+
+      {/* Add to Interests Button */}
+      <Button title="Add to My Interests" onPress={handleAddToMyInterests} color="#5C3D2E" />
+    </ScrollView>
   );
 }
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: "#F4E0AF",
+    padding: 16,
+  },
+  title: {
+    fontSize: 24,
+    fontWeight: "bold",
+    color: "#5C3D2E",
+    marginBottom: 8,
+  },
+  category: {
+    fontSize: 18,
+    fontWeight: "600",
+    color: "#8B5E34",
+    marginBottom: 16,
+    textTransform: "uppercase",
+  },
+  detail: {
+    fontSize: 16,
+    color: "#4A4A4A",
+    marginBottom: 8,
+  },
+  label: {
+    fontWeight: "bold",
+    color: "#8B5E34",
+  },
+  description: {
+    fontSize: 16,
+    color: "#4A4A4A",
+    marginTop: 16,
+    lineHeight: 22,
+  },
+});

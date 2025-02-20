@@ -1,11 +1,11 @@
 const mongoose = require("mongoose");
-const { v4: uuidv4 } = require('uuid'); 
+
 
 
 const examContentSchema = new mongoose.Schema({
     username: {
         type: String,
-        required: true,   // Ensures the username is unique across documents
+        required: true,   
     },
     examTitle: {
         type: String,

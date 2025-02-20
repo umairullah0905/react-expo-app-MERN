@@ -2,7 +2,9 @@ import { Tabs } from 'expo-router';
 import React, { useEffect } from 'react';
 import { Platform } from 'react-native';
 import { useRouter, Redirect } from 'expo-router';
-
+import { Icon } from 'react-native-elements';
+import {UserOutlined} from '@ant-design/icons';
+import { FontAwesome } from '@expo/vector-icons';
 import { HapticTab } from '@/components/HapticTab';
 import { IconSymbol } from '@/components/ui/IconSymbol';
 import TabBarBackground from '@/components/ui/TabBarBackground';
@@ -46,10 +48,10 @@ export default function TabLayout() {
         }}
       />
       <Tabs.Screen
-        name="explore"
+        name="dashboard"
         options={{
-          title: 'Explore',
-          tabBarIcon: ({ color }) => <IconSymbol size={28} name="paperplane.fill" color={color} />,
+          title: 'dashboard',
+          tabBarIcon: ({ color }) => <FontAwesome name="user" size={28} color={color} />,
         }}
       />
     </Tabs>

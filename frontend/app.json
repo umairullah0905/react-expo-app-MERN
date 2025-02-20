@@ -10,13 +10,16 @@
     "newArchEnabled": true,
     "ios": {
       "supportsTablet": true
+      
     },
-    "proxy": "http://localhost:3000",
+    
+    // "proxy": "http://192.168.29.145:8080",
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/adaptive-icon.png",
         "backgroundColor": "#ffffff"
-      }
+      },
+      "package": "com.umair05.frontend"
     },
     "web": {
       "bundler": "metro",
@@ -33,10 +36,29 @@
           "resizeMode": "contain",
           "backgroundColor": "#ffffff"
         }
+      ],
+      [
+        "expo-build-properties",
+        {
+          "android":{
+            "usesCleartextTraffic": true
+          }
+        }
       ]
     ],
     "experiments": {
       "typedRoutes": true
+    },
+    "extra": {
+      "router": {
+        "origin": false
+      },
+      "extra": {
+      "API_URL": "http://192.168.213.111:8080"
+    },
+      "eas": {
+        "projectId": "4cacdd7f-d401-4f70-a503-2b9a3073c10a"
+      }
     }
   }
 }

@@ -1,12 +1,16 @@
 import React, { useState } from "react";
-import { View, Text, TextInput, Button, Alert } from "react-native";
+import { View, Text, TextInput, Button, Alert, StyleSheet } from "react-native";
 import axios from "axios"; // Import Axios
 import { useAuth } from "../context/AuthContext";
-import { Link } from "expo-router";
-
+import { Link, useRouter } from "expo-router";
+interface user {
+  _id: string,
+  username: string;
+  role: string;
+}
 export default function AdminScreen() {
   const { user, logout } = useAuth();
-
+  const router = useRouter();
   // Form state for handling input
   const [examTitle, setExamTitle] = useState("");
   const [registrationDate, setRegistrationDate] = useState("");
@@ -16,134 +20,84 @@ export default function AdminScreen() {
   const [examType, setExamType] = useState("");
   const [examApplicationLink, setExamApplicationLink] = useState("");
   const [image, setImage] = useState("");
-  const [events, setEvents] = useState([]); // State to store events
+  const [events, setEvents] = useState([]); 
 
-  // Fetch the latest exam data
-  const fetchExamContents = async () => {
-    try {
-      const response = await axios.get('http://192.168.29.145:3000/data/exam'); // API endpoint to get exam data
-      setEvents(response.data.examContents); // Update the events state with new data
-    } catch (error) {
-      console.error("Error fetching exam contents:", error);
-    }
-  };
-
-  // Handle the form submission with Axios POST request
-  const handleSubmit = async () => {
-    if (!examTitle || !registrationDate || !preparationLink || !books || !category || !examType || !examApplicationLink) {
-      Alert.alert("Validation Error", "All fields are required.");
-      return;
-    }
-
-    try {
-      const response = await axios.post(
-        `http://192.168.29.145:3000/api/exam/${user?.username}`, // Endpoint URL with username
-        {
-          examTitle,
-          registrationDate,
-          preparationLink,
-          books,
-          category,
-          examType,
-          examApplicationLink,
-          image, // Optional field
-        },
-        {
-          headers: {
-            "Content-Type": "application/json",
-          },
-        }
-      );
-
-      // Handle response
-      if (response.status === 201) {
-        Alert.alert("Success", response.data.message);
-        fetchExamContents(); // Fetch latest exam content data after successful POST request
-      } else {
-        Alert.alert("Error", response.data.message || "Failed to create exam content");
-      }
-    } catch (error) {
-      console.error("Error:", error);
-      Alert.alert("Error", "Something went wrong. Please try again.");
-    }
-  };
 
   // Render admin screen with form
   return (
-    <View style={{ padding: 20 }}>
+    <View style={styles.container}>
       {user?.role === "admin" ? (
         <>
-          <Text>Welcome, Admin!</Text>
+          <Text style={styles.welcomeText}>Welcome, Admin!</Text>
+          
+          {/* Display Username */}
+          <Text style={styles.usernameText}>Username: {user?.username}</Text>
 
-          {/* Exam Form */}
-          <View style={{ marginVertical: 20 }}>
-            <Text>Exam Title</Text>
-            <TextInput
-              value={examTitle}
-              onChangeText={setExamTitle}
-              style={{ borderWidth: 1, marginBottom: 10, padding: 8 }}
-            />
-
-            <Text>Registration Date</Text>
-            <TextInput
-              value={registrationDate}
-              onChangeText={setRegistrationDate}
-              style={{ borderWidth: 1, marginBottom: 10, padding: 8 }}
-            />
-
-            <Text>Preparation Link</Text>
-            <TextInput
-              value={preparationLink}
-              onChangeText={setPreparationLink}
-              style={{ borderWidth: 1, marginBottom: 10, padding: 8 }}
-            />
-
-            <Text>Books</Text>
-            <TextInput
-              value={books}
-              onChangeText={setBooks}
-              style={{ borderWidth: 1, marginBottom: 10, padding: 8 }}
-            />
-
-            <Text>Category</Text>
-            <TextInput
-              value={category}
-              onChangeText={setCategory}
-              style={{ borderWidth: 1, marginBottom: 10, padding: 8 }}
-            />
-
-            <Text>Exam Type</Text>
-            <TextInput
-              value={examType}
-              onChangeText={setExamType}
-              style={{ borderWidth: 1, marginBottom: 10, padding: 8 }}
-            />
-
-            <Text>Exam Application Link</Text>
-            <TextInput
-              value={examApplicationLink}
-              onChangeText={setExamApplicationLink}
-              style={{ borderWidth: 1, marginBottom: 10, padding: 8 }}
-            />
-
-            <Text>Image (URL)</Text>
-            <TextInput
-              value={image}
-              onChangeText={setImage}
-              style={{ borderWidth: 1, marginBottom: 10, padding: 8 }}
-            />
-
-            <Button title="Submit Exam Content" onPress={handleSubmit} />
-          </View>
-
-          <Button title="Logout" onPress={logout} />
-          <Link href="/" style={{ marginTop: 20, color: "blue", textDecorationLine: "underline" }}>
+          {/* Navigation to Home Screen */}
+          <Link href="/" style={styles.link}>
             Go to Home Screen
           </Link>
+
+          {/* Navigation to AdminForm */}
+          <View style={styles.buttonContainer}>
+            <Button
+              title="Go to Admin Form"
+              onPress={() => {
+                // Replace `/admin-form` with the correct route for the AdminForm component
+                router.replace("/admin/AdminForm");
+              }}
+              color="#F9C0AB"
+            />
+          </View>
+
+          <View style={styles.buttonContainer}>
+            <Button title="Logout" onPress={logout} color="#F4E0AF" />
+          </View>
         </>
       ) : (
-        <Text>Redirecting...</Text>
+        <Text style={styles.redirectText}>Redirecting...</Text>
       )}
     </View>
   );
 }
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: "#F4E0AF",
+    padding: 20,
+    justifyContent: "center",
+  },
+  welcomeText: {
+    fontSize: 24,
+    fontWeight: "bold",
+    color: "#F9C0AB",
+    marginBottom: 20,
+    textAlign: "center",
+  },
+  usernameText: {
+    fontSize: 18,
+    fontWeight: "600",
+    color: "#355F2E", // Darker amber shade for contrast
+    marginBottom: 20,
+    textAlign: "center",
+  },
+  link: {
+    fontSize: 16,
+    color: "#007BFF", // Blue for contrast
+    textDecorationLine: "underline",
+    textAlign: "center",
+    marginVertical: 10,
+  },
+  buttonContainer: {
+    marginVertical: 10,
+    borderRadius: 8,
+    overflow: "hidden", // Ensures button corners match the container
+  },
+  redirectText: {
+    fontSize: 18,
+    fontWeight: "600",
+    color: "#4A4A4A", // Neutral gray for readability
+    textAlign: "center",
+  },
+});

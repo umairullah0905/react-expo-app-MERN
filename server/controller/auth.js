@@ -4,6 +4,9 @@ const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const User = require("../models/User");
 
+
+//authentication function 
+
 const authenticate = (roles) => (req, res, next) => {
     const token = req.headers.authorization?.split(" ")[1];
     if (!token) return res.status(401).json({ message: "Unauthorized" });
@@ -22,12 +25,16 @@ const authenticate = (roles) => (req, res, next) => {
     }
 };
 
+//registering new user fucntion
+
 const register = async (req, res) => {
     const { username, password, role } = req.body;
     const user = new User({ username, password, role });
     await user.save();
     res.status(201).json({ message: "User Registered" });
 };
+
+// login function for already existing user
 
 const login = async (req, res) => {
     const { username, password } = req.body;
@@ -45,6 +52,7 @@ const login = async (req, res) => {
         token,
         id: user._id,
         role: user.role,
+        username: user.username
     });
 };
 

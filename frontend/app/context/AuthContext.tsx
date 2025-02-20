@@ -4,8 +4,8 @@ import AsyncStorage from '@react-native-async-storage/async-storage'; // Import 
 
 interface User {
   id: string;
-  role: string;
   username: string;
+  role: string;
 }
 
 interface AuthContextProps {
@@ -28,8 +28,10 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       const storedToken = await AsyncStorage.getItem('token');
       const storedUser = await AsyncStorage.getItem('user');
       if (storedToken && storedUser) {
+        const parsedUser = JSON.parse(storedUser);  // Ensure user is parsed
         setToken(storedToken);
-        setUser(JSON.parse(storedUser));
+        setUser(parsedUser);
+        console.log('Loaded User:', parsedUser);  // Log user for verification
       }
     };
 
@@ -37,33 +39,21 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   }, []);
 
   const login = async (token: string, user: User) => {
+    console.log('User Object During Login:', user);  // Log user during login
     setToken(token);
     setUser(user);
     await AsyncStorage.setItem('token', token);
-    await AsyncStorage.setItem('user', JSON.stringify(user));
+    await AsyncStorage.setItem('user', JSON.stringify(user));  // Store user as string
 
-    const login = async (token: string, user: User) => {
-      setToken(token);
-      setUser(user);
-      await AsyncStorage.setItem('token', token);
-      await AsyncStorage.setItem('user', JSON.stringify(user));
-    
-      // Log the role to verify
-      console.log('User Role:', user.role);
-    
-      // Navigate to the appropriate route after login
-      if (user.role === 'admin') {
-        router.push('/admin');
-      } else {
-        router.push('/user');
-      }
-    };
-    
+    console.log('User Role:', user.role);
+    console.log('User Name:', user.username);  // Log username for verification
+
+    if (user.role === 'admin') {
+      router.push('/');
+    } else {
+      router.push('/');
+    }
   };
-
-  // const isAdmin = () => {
-  //   return user.role === 'admin';
-  // }
 
   const logout = async () => {
     setToken(null);
