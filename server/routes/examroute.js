@@ -26,12 +26,17 @@ router.post("/exam/:username", async (req, res) => {
         return res.status(400).json({ message: "All required fields must be provided" });
     }
 
+    const parsedDate = new Date(registrationDate);
+    if (isNaN(parsedDate.getTime())) {
+        return res.status(400).json({ message: "Invalid registration date format" });
+    }
+
     try {
         // Create a new exam content document
         const newExamContent = new ExamContent({
             username, // Set the username from the URL
             examTitle,
-            registrationDate,
+            registrationDate: parsedDate,
             preparationLink,
             books,
             category,

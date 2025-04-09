@@ -48,12 +48,23 @@ const login = async (req, res) => {
         expiresIn: "1h",
     });
 
-    res.json({
-        token,
-        id: user._id,
-        role: user.role,
-        username: user.username
-    });
+    if(user.role == "user"){
+
+        res.json({ message: "Welcome User!",
+            token,
+            id: user._id,
+            role: user.role,
+            username: user.username
+         });
+    }else{
+        res.json({ message: "Welcome Admin!" ,
+            token,
+            id: user._id,
+            role: user.role,
+            username: user.username
+        });
+    }    
+
 };
 
 module.exports = {

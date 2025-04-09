@@ -56,7 +56,7 @@ export default function EventListItem({ event }: Props) {
           <View style={styles.imageWrapper}>
             {/* Ensure the event image is displayed */}
             <Image
-              source={{ uri: "https://notjustdev-dummy.s3.us-east-2.amazonaws.com/images/2.jpg" }}
+              source={{ uri: `${event.image}` }}
               style={styles.eventImage}
               resizeMode="cover"
             />

@@ -10,13 +10,13 @@ router.post("/register", register);
 router.post("/login", login);
 
 // Admin route
-router.get("/admin", authenticate(["admin"]), (req, res) => {
-    res.json({ message: "Welcome Admin!" });
-});
+// router.get("/admin", authenticate(["admin"]), (req, res) => {
+//     res.json({ message: "Welcome Admin!" });
+// });
 
-// User route
-router.get("/user", authenticate(["user", "admin"]), (req, res) => {
-    res.json({ message: "Welcome User!" });
-});
+// // User route
+// router.get("/user", authenticate(["user", "admin"]), (req, res) => {
+//     res.json({ message: "Welcome User!" });
+// });
 
 module.exports = router;

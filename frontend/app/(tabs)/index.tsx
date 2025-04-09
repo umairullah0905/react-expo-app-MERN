@@ -88,6 +88,7 @@ export default function HomeScreen() {
   >
     <Text style={styles.buttonText}>All</Text>
   </TouchableOpacity>
+
   <TouchableOpacity
     style={[
       styles.categoryButton,
@@ -97,6 +98,7 @@ export default function HomeScreen() {
   >
     <Text style={styles.buttonText}>Engineering</Text>
   </TouchableOpacity>
+
   <TouchableOpacity
     style={[
       styles.categoryButton,
@@ -105,6 +107,16 @@ export default function HomeScreen() {
     onPress={() => filterByCategory('MBA')}
   >
     <Text style={styles.buttonText}>MBA</Text>
+  </TouchableOpacity>
+
+  <TouchableOpacity
+    style={[
+      styles.categoryButton,
+      selectedCategory === 'Medical' && styles.selectedButton,
+    ]}
+    onPress={() => filterByCategory('Medical')}
+  >
+    <Text style={styles.buttonText}>Medical</Text>
   </TouchableOpacity>
 </View>
 

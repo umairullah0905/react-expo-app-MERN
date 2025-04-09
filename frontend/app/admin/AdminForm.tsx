@@ -1,16 +1,25 @@
 import React, { useState } from "react";
-import { View, Text, TextInput, Button, Alert,ScrollView, KeyboardAvoidingView, Platform, StyleSheet } from "react-native";
-import axios from "axios"; // Import Axios
+import {
+  View,
+  Text,
+  TextInput,
+  Button,
+  Alert,
+  ScrollView,
+  KeyboardAvoidingView,
+  Platform,
+  StyleSheet,
+} from "react-native";
+import axios from "axios";
 import { useAuth } from "../context/AuthContext";
 import { Link } from "expo-router";
+import { Picker } from "@react-native-picker/picker"; // 👈 Import Picker
 
-import {BASE_URL} from '../constant';
+import { BASE_URL } from "../constant";
 
-export default function AdminForm(){
-
+export default function AdminForm() {
   const { user, logout } = useAuth();
 
-  // Form state for handling input
   const [examTitle, setExamTitle] = useState("");
   const [registrationDate, setRegistrationDate] = useState("");
   const [preparationLink, setPreparationLink] = useState("");
@@ -20,28 +29,33 @@ export default function AdminForm(){
   const [examApplicationLink, setExamApplicationLink] = useState("");
   const [image, setImage] = useState("");
   const [events, setEvents] = useState([]);
-  const API_BASE_URL = process.env.API_BASE_URL;
-
 
   const fetchExamContents = async () => {
     try {
-      const response = await axios.get(`http://${BASE_URL}:8080/data/exam`); // API endpoint to get exam data
-      setEvents(response.data.examContents); // Update the events state with new data
+      const response = await axios.get(`http://${BASE_URL}:8080/data/exam`);
+      setEvents(response.data.examContents);
     } catch (error) {
       console.error("Error fetching exam contents:", error);
     }
   };
 
-
   const handleSubmit = async () => {
-    if (!examTitle || !registrationDate || !preparationLink || !books || !category || !examType || !examApplicationLink) {
+    if (
+      !examTitle ||
+      !registrationDate ||
+      !preparationLink ||
+      !books ||
+      !category ||
+      !examType ||
+      !examApplicationLink
+    ) {
       Alert.alert("Validation Error", "All fields are required.");
       return;
     }
 
     try {
       const response = await axios.post(
-        `http://${BASE_URL}:8080/api/exam/${user?.username}`, // Endpoint URL with username
+        `http://${BASE_URL}:8080/api/exam/${user?.username}`,
         {
           examTitle,
           registrationDate,
@@ -50,7 +64,7 @@ export default function AdminForm(){
           category,
           examType,
           examApplicationLink,
-          image, // Optional field
+          image,
         },
         {
           headers: {
@@ -59,10 +73,9 @@ export default function AdminForm(){
         }
       );
 
-      // Handle response
       if (response.status === 201) {
         Alert.alert("Success", response.data.message);
-        fetchExamContents(); // Fetch latest exam content data after successful POST request
+        fetchExamContents();
       } else {
         Alert.alert("Error", response.data.message || "Failed to create exam content");
       }
@@ -76,14 +89,13 @@ export default function AdminForm(){
     <KeyboardAvoidingView
       behavior={Platform.OS === "android" ? "padding" : "height"}
       style={styles.container}
-      keyboardVerticalOffset={Platform.OS === "android" ? 0 : 80} // Adjust offset as needed
+      keyboardVerticalOffset={Platform.OS === "android" ? 0 : 80}
     >
       <ScrollView contentContainerStyle={styles.scrollContent}>
         {user?.role === "admin" ? (
           <>
             <Text style={styles.header}>Welcome, Admin!</Text>
 
-            {/* Exam Form */}
             <View style={styles.form}>
               <View style={styles.formGroup}>
                 <TextInput
@@ -97,15 +109,17 @@ export default function AdminForm(){
               </View>
 
               <View style={styles.formGroup}>
-                <TextInput
-                  value={registrationDate}
-                  onChangeText={setRegistrationDate}
-                  style={styles.input}
-                  placeholder="Registration Date"
-                  placeholderTextColor="transparent"
-                />
-                <Text style={styles.label}>Registration Date</Text>
-              </View>
+              <TextInput
+                value={registrationDate}
+                onChangeText={setRegistrationDate}
+                style={styles.input}
+                placeholder="YYYY-MM-DD"
+                placeholderTextColor="#888"
+                keyboardType="default"
+              />
+              <Text style={styles.label}>Registration Date</Text>
+              <Text style={styles.helperText}>Enter date in YYYY-MM-DD format (e.g., 2025-04-30)</Text>
+            </View>
 
               <View style={styles.formGroup}>
                 <TextInput
@@ -129,15 +143,20 @@ export default function AdminForm(){
                 <Text style={styles.label}>Books</Text>
               </View>
 
+              {/* 👇 Replaced category input with a Picker */}
               <View style={styles.formGroup}>
-                <TextInput
-                  value={category}
-                  onChangeText={setCategory}
-                  style={styles.input}
-                  placeholder="Category"
-                  placeholderTextColor="transparent"
-                />
-                <Text style={styles.label}>Category</Text>
+                <Text style={styles.pickerLabel}>Category</Text>
+                <View style={styles.pickerWrapper}>
+                  <Picker
+                    selectedValue={category}
+                    onValueChange={(itemValue) => setCategory(itemValue)}
+                  >
+                    <Picker.Item label="Select a category" value="" enabled={false} />
+                    <Picker.Item label="Engineering" value="Engineering" />
+                    <Picker.Item label="Medical" value="Medical" />
+                    <Picker.Item label="MBA" value="MBA" />
+                  </Picker>
+                </View>
               </View>
 
               <View style={styles.formGroup}>
@@ -227,9 +246,27 @@ const styles = StyleSheet.create({
     paddingHorizontal: 4,
     transform: [{ translateY: -20 }, { scale: 1 }],
   },
+  pickerWrapper: {
+    borderWidth: 1,
+    borderColor: "#000",
+    borderRadius: 5,
+    overflow: "hidden",
+  },
+  pickerLabel: {
+    fontSize: 14,
+    marginBottom: 5,
+    color: "#666",
+  },
   link: {
     marginTop: 20,
     color: "blue",
     textDecorationLine: "underline",
   },
+  helperText: {
+    fontSize: 12,
+    color: "#888",
+    marginTop: 4,
+    marginLeft: 4,
+  },
+  
 });
